@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_cn.com.guangduo.generator" default="compile.module.cn.com.guangduo.generator">
+  <dirname property="module.cn.com.guangduo.generator.basedir" file="${ant.file.module_cn.com.guangduo.generator}"/>
+  
+  <property name="module.jdk.home.cn.com.guangduo.generator" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.cn.com.guangduo.generator" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.cn.com.guangduo.generator" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.cn.com.guangduo.generator" value="-encoding GBK -source 1.6 -target 1.6 ${compiler.args}"/>
+  
+  <property name="cn.com.guangduo.generator.output.dir" value="${module.cn.com.guangduo.generator.basedir}/target/classes"/>
+  <property name="cn.com.guangduo.generator.testoutput.dir" value="${module.cn.com.guangduo.generator.basedir}/target/test-classes"/>
+  
+  <path id="cn.com.guangduo.generator.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="cn.com.guangduo.generator.module.production.classpath">
+    <path refid="${module.jdk.classpath.cn.com.guangduo.generator}"/>
+    <path refid="library.maven:_org.freemarker:freemarker:2.3.20.classpath"/>
+    <path refid="library.maven:_com.oracle:ojdbc14:10.2.0.2.0.classpath"/>
+  </path>
+  
+  <path id="cn.com.guangduo.generator.runtime.production.module.classpath">
+    <pathelement location="${cn.com.guangduo.generator.output.dir}"/>
+    <path refid="library.maven:_org.freemarker:freemarker:2.3.20.classpath"/>
+    <path refid="library.maven:_com.oracle:ojdbc14:10.2.0.2.0.classpath"/>
+  </path>
+  
+  <path id="cn.com.guangduo.generator.module.classpath">
+    <pathelement location="${cn.com.guangduo.generator.output.dir}"/>
+    <path refid="${module.jdk.classpath.cn.com.guangduo.generator}"/>
+    <path refid="library.maven:_org.freemarker:freemarker:2.3.20.classpath"/>
+    <path refid="library.maven:_com.oracle:ojdbc14:10.2.0.2.0.classpath"/>
+  </path>
+  
+  <path id="cn.com.guangduo.generator.runtime.module.classpath">
+    <pathelement location="${cn.com.guangduo.generator.testoutput.dir}"/>
+    <pathelement location="${cn.com.guangduo.generator.output.dir}"/>
+    <path refid="library.maven:_org.freemarker:freemarker:2.3.20.classpath"/>
+    <path refid="library.maven:_com.oracle:ojdbc14:10.2.0.2.0.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.cn.com.guangduo.generator">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.cn.com.guangduo.generator">
+    <patternset refid="excluded.from.module.cn.com.guangduo.generator"/>
+  </patternset>
+  
+  <path id="cn.com.guangduo.generator.module.sourcepath">
+    <dirset dir="${module.cn.com.guangduo.generator.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="cn.com.guangduo.generator.module.test.sourcepath">
+    <dirset dir="${module.cn.com.guangduo.generator.basedir}">
+      <include name="src/test/java"/>
+      <include name="src/test/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.cn.com.guangduo.generator" depends="compile.module.cn.com.guangduo.generator.production,compile.module.cn.com.guangduo.generator.tests" description="Compile module cn.com.guangduo.generator"/>
+  
+  <target name="compile.module.cn.com.guangduo.generator.production" depends="register.custom.compilers" description="Compile module cn.com.guangduo.generator; production classes">
+    <mkdir dir="${cn.com.guangduo.generator.output.dir}"/>
+    <javac2 destdir="${cn.com.guangduo.generator.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.cn.com.guangduo.generator}/javac">
+      <compilerarg line="${compiler.args.cn.com.guangduo.generator}"/>
+      <bootclasspath refid="cn.com.guangduo.generator.module.bootclasspath"/>
+      <classpath refid="cn.com.guangduo.generator.module.production.classpath"/>
+      <src refid="cn.com.guangduo.generator.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.cn.com.guangduo.generator"/>
+    </javac2>
+    
+    <copy todir="${cn.com.guangduo.generator.output.dir}">
+      <fileset dir="${module.cn.com.guangduo.generator.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.cn.com.guangduo.generator.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.cn.com.guangduo.generator.tests" depends="register.custom.compilers,compile.module.cn.com.guangduo.generator.production" description="compile module cn.com.guangduo.generator; test classes" unless="skip.tests">
+    <mkdir dir="${cn.com.guangduo.generator.testoutput.dir}"/>
+    <javac2 destdir="${cn.com.guangduo.generator.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.cn.com.guangduo.generator}/javac">
+      <compilerarg line="${compiler.args.cn.com.guangduo.generator}"/>
+      <bootclasspath refid="cn.com.guangduo.generator.module.bootclasspath"/>
+      <classpath refid="cn.com.guangduo.generator.module.classpath"/>
+      <src refid="cn.com.guangduo.generator.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.cn.com.guangduo.generator"/>
+    </javac2>
+    
+    <copy todir="${cn.com.guangduo.generator.testoutput.dir}">
+      <fileset dir="${module.cn.com.guangduo.generator.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.cn.com.guangduo.generator.basedir}/src/test/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.cn.com.guangduo.generator" description="cleanup module">
+    <delete dir="${cn.com.guangduo.generator.output.dir}"/>
+    <delete dir="${cn.com.guangduo.generator.testoutput.dir}"/>
+  </target>
+</project>
